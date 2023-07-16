@@ -1,4 +1,4 @@
-def treat_client_request(stock: dict, product: str, amount: int, client: str, address: str, date_order: str, payment: str, completed_orders: list) -> None:
+def treat_client_request(stock: dict, product: str, amount: int, client: str, address: str, date_order: str, payment: str, completed_orders: list, logger) -> None:
     """
     Função responsável por aplicar alguns tratamentos no processamento
     > Verificar se o produto solicitado existe em estoque
@@ -21,22 +21,22 @@ def treat_client_request(stock: dict, product: str, amount: int, client: str, ad
     # Verificar se o produto solicitado existe em estoque
     
     if product not in stock['Produto']:
-        print(f"O produto >> {product} << não existe em nosso estoque.")
+        logger.warning(f"O produto >> {product} << não existe em nosso estoque.")
         return
     
     # Verifica se a quantidade em estoque é suficiente
     
     index = stock['Produto'].index(product)
     if amount > stock['Quantidade'][index]:
-        print(f"A quantidade solicitada do produto {product} excede a disponibilidade atual. Em estoque: {stock['Quantidade'][index]}")
+        logger.warning(f"A quantidade solicitada do produto {product} excede a disponibilidade atual. Em estoque: {stock['Quantidade'][index]}")
         return
     
     # Verificar se a quantidade está sendo passada como 0
     if amount == 0:
-        print('Não é possível passar o valor 0 para Realizar um pedido. ')
+        logger.warning('Não é possível passar o valor 0 para Realizar um pedido. ')
         return
     
-    print(f"Pedido recebido: {product}, Quantidade: {amount}, Cliente: {client}")
+    logger.info(f"Pedido recebido: {product}, Quantidade: {amount}, Cliente: {client}")
     
     
     pedido = {

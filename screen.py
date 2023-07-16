@@ -51,7 +51,7 @@ def apply_mask_zip(zip_var: str) -> str:
 
     return zip_formatted
 
-def get_address(zip_code_entry: str, label_address: str) -> None:
+def get_address(zip_code_entry: str, label_address: str, logger) -> None:
     """
     Função responsável por pegar o endereço e realizar uma requisição no VIA CEP.
 
@@ -68,11 +68,11 @@ def get_address(zip_code_entry: str, label_address: str) -> None:
         data = response.json()
         if "erro" not in data:
             label_address.set(data["logradouro"])
-        print('CEP válido')
+        logger.info('CEP válido')
     else:
-        print('CEP inválido! ')
+        logger.warning('CEP inválido! ')
     
-def execute_request(product_var: str, quantity_var: str, client_var: str, address_var: str, date_order: str, payment_method_var: str) -> None:
+def execute_request(product_var: str, quantity_var: str, client_var: str, address_var: str, date_order: str, payment_method_var: str, logger) -> None:
     """_summary_
 
     Args:
@@ -97,14 +97,14 @@ def execute_request(product_var: str, quantity_var: str, client_var: str, addres
             
             amount = int(amount)
         
-            treat_client_request(stock, product, amount, client, address, date, payment, completed_orders)
+            treat_client_request(stock, product, amount, client, address, date, payment, completed_orders, logger)
         else:
-            print('Digite um valor válido em >>> quantidade <<< ')
+            logger.warning('Digite um valor válido em >>> quantidade <<< ')
         
     else:
-        print('Dados incompletos. Preencha todos os campos.')
+        logger.warning('Dados incompletos. Preencha todos os campos.')
 
-def finalize_order() -> pd.DataFrame:
+def finalize_order(logger) -> pd.DataFrame:
     """
     Função responsável por finalizar o pedido e gerar um relatório em CSV com os dados do pedido
 
@@ -112,7 +112,7 @@ def finalize_order() -> pd.DataFrame:
         pd.Dataframe: Retorna um dataframe contendo os pedidos / caso não haja pedidos, retorna um df vazio
     """
       
-    print('Pedido finalizado com sucesso! ')
+    logger.info('Pedido finalizado com sucesso! ')
     
     # Gerando relatório em csv com os dados dos pedidos dos Clientes
     df_orders = pd.DataFrame(completed_orders)
@@ -180,7 +180,7 @@ def declare_variables() -> str:
     return client_var, address_var, date_order, product_var, quantity_var, payment_method_var, zip_var
 
 
-def btn_confirm_process(window: customtkinter.CTk, product_var: str, quantity_var: int, client_var: str, address_var: str, date_order: str, payment_method_var: str) -> customtkinter.CTkButton:
+def btn_confirm_process(window: customtkinter.CTk, product_var: str, quantity_var: int, client_var: str, address_var: str, date_order: str, payment_method_var: str, logger) -> customtkinter.CTkButton:
     
     """
     Função responsável por gerar um botão para confirmar o processamento de pedido. 
@@ -190,12 +190,12 @@ def btn_confirm_process(window: customtkinter.CTk, product_var: str, quantity_va
     """
     
     button_process = customtkinter.CTkButton(window, text="Registrar Pedido",
-                                        command=lambda: execute_request(product_var, quantity_var, client_var, address_var, date_order, payment_method_var))
+                                        command=lambda: execute_request(product_var, quantity_var, client_var, address_var, date_order, payment_method_var, logger))
     
     return button_process
 
 
-def btn_finalize_process(window: customtkinter.CTk) -> customtkinter.CTkButton:
+def btn_finalize_process(window: customtkinter.CTk, logger) -> customtkinter.CTkButton:
     """
     Função responsável por gerar um botão para finalziar o pedido.
 
@@ -206,12 +206,12 @@ def btn_finalize_process(window: customtkinter.CTk) -> customtkinter.CTkButton:
         customtkinter.CTkButton: Retornar o botão para finalizar
     """
     button_finalize = customtkinter.CTkButton(window, text="Finalizar Pedido",
-                                          command=lambda: finalize_order(), fg_color="red")
+                                          command=lambda: finalize_order(logger), fg_color="red")
     
     return button_finalize
     
 
-def generate_screen() -> None:
+def generate_screen(logger) -> None:
     """
     Essa função é respponsável por gerar toda a tela da visão do cliente, com os label, e botões posicionados
     em seu devido lugar.
@@ -229,7 +229,7 @@ def generate_screen() -> None:
      
     label_zip = customtkinter.CTkLabel(window, text="CEP: ") #novo
     entry_zip  = customtkinter.CTkEntry(window, textvariable=zip_var)
-    btn_search = customtkinter.CTkButton(window, text='Buscar', command=lambda: get_address(zip_var, address_var))
+    btn_search = customtkinter.CTkButton(window, text='Buscar', command=lambda: get_address(zip_var, address_var, logger))
         
     label_address = customtkinter.CTkLabel(window, text="Logradouro")
     entry_address = customtkinter.CTkEntry(window, textvariable=address_var, width=300, height=25)
@@ -248,11 +248,11 @@ def generate_screen() -> None:
 
 
     # # Botão de processar pedido
-    button_process = btn_confirm_process(window,product_var, quantity_var, client_var, address_var, date_order, payment_method_var)
+    button_process = btn_confirm_process(window,product_var, quantity_var, client_var, address_var, date_order, payment_method_var, logger)
 
 
     # Botão para finalizar o pedido
-    button_finalize = btn_finalize_process(window)
+    button_finalize = btn_finalize_process(window, logger)
 
     # Posicionar os elementos na janela
     label_client.pack()
@@ -285,4 +285,3 @@ def generate_screen() -> None:
     window.mainloop()
 
 
-generate_screen()
