@@ -1,4 +1,4 @@
-from ..process_purchase import check_product_existence, check_sufficient_quantity
+from ..process_purchase import check_product_existence, check_sufficient_quantity, check_zero_quantity
 
 import pytest
 
@@ -30,7 +30,6 @@ def sample_logger():
 def test_check_product_existence(sample_stock, sample_logger):
     assert check_product_existence(sample_stock, 'Cadeira Gamer', sample_logger) == True
     assert check_product_existence(sample_stock, 'Cadeira Gamer Azul Dragon', sample_logger) == False
-    
     assert len(sample_logger.warnings) == 1
 
 def test_check_sufficient_quantity(sample_stock, sample_logger):
@@ -38,4 +37,8 @@ def test_check_sufficient_quantity(sample_stock, sample_logger):
     assert check_sufficient_quantity(sample_stock, 'Cadeira Gamer', 95, sample_logger) == False
     assert len(sample_logger.warnings) == 1  
     
+def test_check_zero_quantity(sample_logger):
+    assert check_zero_quantity(10, sample_logger) == True
+    assert check_zero_quantity(0, sample_logger) == False
+    assert len(sample_logger.warnings) == 1 
     
