@@ -107,7 +107,7 @@ def generate_screen():
 
     # Botão para finalizar o pedido
     button_finalize = customtkinter.CTkButton(window, text="Finalizar Pedido",
-                                          command=lambda: finalizar_pedido())
+                                          command=lambda: finalizar_pedido(), fg_color="red")
 
     # Posicionar os elementos na janela
     label_client.pack()
