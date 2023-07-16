@@ -14,17 +14,35 @@ load_dotenv()
 
 completed_orders = []
 
-def validate_zip(zip_var):
-    # Remove caracter que nao sao numéricos
+def validate_zip(zip_var: str) -> bool:
+    """
+    A função valida se o CEP está no formato correto
+
+    Args:
+        zip_var (str): o código do CEP a ser validado
+
+    Returns:
+        bool: Retorna um valor booleano, se o CEP estiver em um formato correto.
+    """
+    
     zip_var = re.sub(r'\D', '', zip_var)
 
-    # Verificar se o CEP possui o formato correto
     if re.match(r'^\d{8}$', zip_var):
         return True
     else:
         return False
 
-def apply_mask_zip(zip_var):
+def apply_mask_zip(zip_var: str) -> str:
+    """
+    A função aplica uma máscara no CEP. 
+
+    Args:
+        zip_var (str): CEP a ser formatado
+
+    Returns:
+        str: O CEP formatado > 'XXXXX-XXX'
+    """
+    
     # Remove caracter que nao sao numéricos
     zip_var = re.sub(r'\D', '', zip_var)
 
@@ -33,7 +51,14 @@ def apply_mask_zip(zip_var):
 
     return zip_formatted
 
-def get_address(zip_code_entry, label_address):
+def get_address(zip_code_entry: str, label_address: str) -> None:
+    """
+    Função responsável por pegar o endereço e realizar uma requisição no VIA CEP.
+
+    Args:
+        zip_code_entry (str): Entrada do User
+        label_address (str): Pega o logradouro que vem da api
+    """
     zip_var = zip_code_entry.get()
          
     if validate_zip(zip_var):
@@ -47,7 +72,17 @@ def get_address(zip_code_entry, label_address):
     else:
         print('CEP inválido! ')
     
-def execute_request(product_var, quantity_var, client_var, address_var, date_order, payment_method_var):
+def execute_request(product_var: str, quantity_var: str, client_var: str, address_var: str, date_order: str, payment_method_var: str) -> None:
+    """_summary_
+
+    Args:
+        product_var (str): Descrição do produto
+        quantity_var (str): Quantidade do produto - logo após essa var é convertida para inteiro
+        client_var (str): Nome do cliente
+        address_var (str): Endereço do cliente
+        date_order (str): Data do Pedido
+        payment_method_var (str): Método de pagamento
+    """
     product = product_var.get()
     amount = quantity_var.get()
     client = client_var.get()
@@ -69,8 +104,14 @@ def execute_request(product_var, quantity_var, client_var, address_var, date_ord
     else:
         print('Dados incompletos. Preencha todos os campos.')
 
-def finalize_order():  
-    
+def finalize_order() -> pd.DataFrame:
+    """
+    Função responsável por finalizar o pedido e gerar um relatório em CSV com os dados do pedido
+
+    Returns:
+        pd.Dataframe: Retorna um dataframe contendo os pedidos / caso não haja pedidos, retorna um df vazio
+    """
+      
     print('Pedido finalizado com sucesso! ')
     
     # Gerando relatório em csv com os dados dos pedidos dos Clientes
@@ -81,7 +122,13 @@ def finalize_order():
     
     return df_orders
 
-def configure_windows_screen_tkinter():
+def configure_windows_screen_tkinter() -> customtkinter.CTk:
+    """
+    Função responsável por setar configurações da tela do tkinter
+
+    Returns:
+        customtkinter.CTk: retorna uma instancia da janela principal
+    """
     customtkinter.set_appearance_mode("System")
     customtkinter.set_default_color_theme("blue")
 
@@ -94,7 +141,13 @@ def configure_windows_screen_tkinter():
     
     return window
 
-def generate_table_products(window):
+def generate_table_products(window: customtkinter.CTk) -> None:
+    """
+    Função responsável por gerar uma tabela de Produtos, com os valores.
+
+    Args:
+        window (customtkinter.CTk): Recebe como parâmetro uma janela 
+    """
     tree = ttk.Treeview(window, columns=list(stock.keys()), show='headings')
 
     tree.pack()
@@ -108,9 +161,13 @@ def generate_table_products(window):
         tree.insert('', 'end',
                     values=(stock['Produto'][i], stock['Quantidade'][i], stock['Preço'][i]))    
     
-def declare_variables():
-    
-    #declaracao de variaveis 
+def declare_variables() -> str:
+    """
+    Função responsável por declarar as variáveis de entrada dos valores
+
+    Returns:
+        str: Cada valor retorna uma string
+    """
 
     client_var = customtkinter.StringVar()
     address_var = customtkinter.StringVar()
@@ -123,24 +180,42 @@ def declare_variables():
     return client_var, address_var, date_order, product_var, quantity_var, payment_method_var, zip_var
 
 
-def btn_confirm_process(window,product_var, quantity_var, client_var, address_var, date_order, payment_method_var):
-    # Botão de processar pedido
+def btn_confirm_process(window: customtkinter.CTk, product_var: str, quantity_var: int, client_var: str, address_var: str, date_order: str, payment_method_var: str) -> customtkinter.CTkButton:
+    
+    """
+    Função responsável por gerar um botão para confirmar o processamento de pedido. 
+
+    Returns:
+        customtkinter.CTkButton: Retornar o botão para confirmar
+    """
+    
     button_process = customtkinter.CTkButton(window, text="Registrar Pedido",
                                         command=lambda: execute_request(product_var, quantity_var, client_var, address_var, date_order, payment_method_var))
     
     return button_process
 
 
-def btn_finalize_process(window):
-    # Botão para finalizar o pedido
+def btn_finalize_process(window: customtkinter.CTk) -> customtkinter.CTkButton:
+    """
+    Função responsável por gerar um botão para finalziar o pedido.
+
+    Args:
+        window (customtkinter.CTk): Recebe como parametro a janela principal
+
+    Returns:
+        customtkinter.CTkButton: Retornar o botão para finalizar
+    """
     button_finalize = customtkinter.CTkButton(window, text="Finalizar Pedido",
                                           command=lambda: finalize_order(), fg_color="red")
     
     return button_finalize
     
 
-# * Usando o customtkinter/tkinter  para gerar uma tela e simular o lado do Cliente / "Compra do Produto"
-def generate_screen():
+def generate_screen() -> None:
+    """
+    Essa função é respponsável por gerar toda a tela da visão do cliente, com os label, e botões posicionados
+    em seu devido lugar.
+    """
  
     window = configure_windows_screen_tkinter()
     
