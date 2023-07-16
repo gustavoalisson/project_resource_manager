@@ -14,30 +14,30 @@ load_dotenv()
 
 completed_orders = []
 
-def validate_zip(zip):
+def validate_zip(zip_var):
     # Remove caracter que nao sao numéricos
-    zip = re.sub(r'\D', '', zip)
+    zip_var = re.sub(r'\D', '', zip_var)
 
     # Verificar se o CEP possui o formato correto
-    if re.match(r'^\d{8}$', zip):
+    if re.match(r'^\d{8}$', zip_var):
         return True
     else:
         return False
 
-def apply_mask_zip(zip):
+def apply_mask_zip(zip_var):
     # Remove caracter que nao sao numéricos
-    zip = re.sub(r'\D', '', zip)
+    zip_var = re.sub(r'\D', '', zip_var)
 
     # Aplicar a máscara
-    zip_formatted = re.sub(r'^(\d{5})(\d{3})$', r'\1-\2', zip)
+    zip_formatted = re.sub(r'^(\d{5})(\d{3})$', r'\1-\2', zip_var)
 
     return zip_formatted
 
 def get_address(zip_code_entry, label_address):
-    zip = zip_code_entry.get()
+    zip_var = zip_code_entry.get()
          
-    if validate_zip(zip):
-        zip_formatted = apply_mask_zip(zip)
+    if validate_zip(zip_var):
+        zip_formatted = apply_mask_zip(zip_var)
         url = f"{os.getenv('BASE_URL_VIACEP')}{zip_formatted}/json/"
         response = requests.get(url)
         data = response.json()
@@ -79,18 +79,20 @@ def finalize_order():
     
     return df_pedidos
 
-# * Usando o customtkinter/tkinter  para gerar uma tela e simular o lado do Cliente / "Compra do Produto"
-def generate_screen():
- 
+def configure_windows_screen_tkinter():
     customtkinter.set_appearance_mode("System")
     customtkinter.set_default_color_theme("blue")
-
 
     # Instancia para iniciar uma nova janela
     window = customtkinter.CTk()
     
-    # window.attributes('-fullscreen',True)
+    window.iconbitmap(os.getenv('ICON_MESHA_APP'))
 
+    window.title('Registro de Pedido')
+    
+    return window
+
+def generate_table_products(window):
     tree = ttk.Treeview(window, columns=list(stock.keys()), show='headings')
 
     tree.pack()
@@ -103,13 +105,8 @@ def generate_screen():
     for i in range(len(stock['Produto'])):
         tree.insert('', 'end',
                     values=(stock['Produto'][i], stock['Quantidade'][i], stock['Preço'][i]))    
-
-    window.iconbitmap(os.getenv('ICON_MESHA_APP'))
-
-    window.geometry("1200x800")
-
-    window.title('Registro de Pedido')
-
+    
+def declare_variables():
     
     #declaracao de variaveis 
 
@@ -119,22 +116,47 @@ def generate_screen():
     product_var = customtkinter.StringVar()
     quantity_var = customtkinter.StringVar()
     payment_method_var = customtkinter.StringVar()
-    zip = customtkinter.StringVar() #novo
+    zip_var = customtkinter.StringVar() 
+    
+    return client_var, address_var, date_order, product_var, quantity_var, payment_method_var, zip_var
+
+
+def btn_confirm_process(window,product_var, quantity_var, client_var, address_var, date_order, payment_method_var):
+    # Botão de processar pedido
+    button_process = customtkinter.CTkButton(window, text="Registrar Pedido",
+                                        command=lambda: execute_request(product_var, quantity_var, client_var, address_var, date_order, payment_method_var))
+    
+    return button_process
+
+
+def btn_finalize_process(window):
+    # Botão para finalizar o pedido
+    button_finalize = customtkinter.CTkButton(window, text="Finalizar Pedido",
+                                          command=lambda: finalize_order(), fg_color="red")
+    
+    return button_finalize
+    
+
+# * Usando o customtkinter/tkinter  para gerar uma tela e simular o lado do Cliente / "Compra do Produto"
+def generate_screen():
+ 
+    window = configure_windows_screen_tkinter()
+    
+    generate_table_products(window)
+    
+    client_var, address_var, date_order, product_var, quantity_var, payment_method_var, zip_var = declare_variables()
     
     
     label_client = customtkinter.CTkLabel(window, text="Cliente:")
     entry_client = customtkinter.CTkEntry(window, textvariable=client_var, width=300, height=25)
-    
-    
+     
     label_zip = customtkinter.CTkLabel(window, text="CEP: ") #novo
-    entry_zip  = customtkinter.CTkEntry(window, textvariable=zip)
-    botao_buscar = customtkinter.CTkButton(window, text='Buscar', command=lambda: get_address(zip, address_var))
-
+    entry_zip  = customtkinter.CTkEntry(window, textvariable=zip_var)
+    btn_search = customtkinter.CTkButton(window, text='Buscar', command=lambda: get_address(zip_var, address_var))
         
     label_address = customtkinter.CTkLabel(window, text="Logradouro")
     entry_address = customtkinter.CTkEntry(window, textvariable=address_var, width=300, height=25)
     
-
     label_date_order = customtkinter.CTkLabel(window, text="Data do Pedido:")
     entry_date = customtkinter.CTkEntry(window, textvariable=date_order, width=300, height=25)
 
@@ -148,14 +170,12 @@ def generate_screen():
     entry_payment_method = customtkinter.CTkEntry(window, textvariable=payment_method_var, width=300, height=25)
 
 
-    # Botão de processar pedido
-    button_process = customtkinter.CTkButton(window, text="Registrar Pedido",
-                                        command=lambda: execute_request(product_var, quantity_var, client_var, address_var, date_order, payment_method_var))
+    # # Botão de processar pedido
+    button_process = btn_confirm_process(window,product_var, quantity_var, client_var, address_var, date_order, payment_method_var)
 
 
     # Botão para finalizar o pedido
-    button_finalize = customtkinter.CTkButton(window, text="Finalizar Pedido",
-                                          command=lambda: finalize_order(), fg_color="red")
+    button_finalize = btn_finalize_process(window)
 
     # Posicionar os elementos na janela
     label_client.pack()
@@ -163,7 +183,7 @@ def generate_screen():
 
     label_zip.pack()
     entry_zip.pack()
-    botao_buscar.pack()
+    btn_search.pack()
     
     label_address.pack()
     entry_address.pack()
