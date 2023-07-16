@@ -1,0 +1,20 @@
+,Cliente,Produto,Quantidade,Endereço,Data_do_Pedido,Tipo_Pagamento
+0,Thais Rodrigues,Caneca Dark,1,Rua Manoel Lopes dos Santos,01/07/2023,PIX
+1,Alisson Gustavo,Caneca Dark,1,1ª Rua do Colégio,01/07/2023,PIX
+2,Alisson Gustavo,Livro - Código limpo,1,1ª Rua do Colégio,01/07/2023,PIX
+3,Pedro Filho,Livro - Código limpo,1,Rua Abraão Antônio,01/07/2023,PIX
+4,Pedro Filho,MousePad Programmer,1,Rua Abraão Antônio,01/07/2023,PIX
+5,Pedro Filho,Livro - Entendendo Algoritmos,2,Rua Abraão Antônio,01/07/2023,PIX
+6,Manoel da Silva ,Livro - Entendendo Algoritmos,1,Rua Rosa Guimarães,01/07/2023,PIX
+7,Manoel da Silva ,Livro - Entendendo Algoritmos,1,Caneca Dark,01/07/2023,PIX
+8,Manoel da Silva ,Livro - Entendendo Algoritmos,1,Copo Térmico Python,01/07/2023,PIX
+9,João Filho,Livro - Entendendo Algoritmos,2,Rua Nossa Senhora do Carmo,01/07/2023,PIX
+10,João Filho,Headset Gamer,2,Rua Nossa Senhora do Carmo,01/07/2023,PIX
+11,Priscilla Cândido,Headset Gamer,4,Travessa Major Celso da Câmara Lima,03/07/2023,PIX
+12,Priscilla Cândido,Squeeze C++,2,Travessa Major Celso da Câmara Lima,03/07/2023,PIX
+13,Priscilla Cândido,Caneca Preta Programador,2,Quadra 5 Comércio Local 11,03/07/2023,PIX
+14,Emanuel Hermino,Caneca Preta Programador,2,QNP 11 Conjunto E,03/07/2023,Cartão de Crédito
+15,Emanuel Hermino,Livro - Código limpo,2,QNP 11 Conjunto E,03/07/2023,Cartão de Crédito
+16,Jamilly Raiane,Livro - Código limpo,2,QNP 11 Conjunto E,03/07/2023,Cartão de Crédito
+17,Jamilly Raiane,Headset Gamer,2,QNP 11 Conjunto E,03/07/2023,Cartão de Crédito
+18,Jamilly Raiane,MousePad Programmer,2,QNP 11 Conjunto E,03/07/2023,Cartão de Crédito
