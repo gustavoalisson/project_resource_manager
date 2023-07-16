@@ -1,4 +1,22 @@
-def treat_client_request(stock, product, amount, client, address, date_order, payment, completed_orders):
+def treat_client_request(stock: dict, product: str, amount: int, client: str, address: str, date_order: str, payment: str, completed_orders: list) -> None:
+    """
+    Função responsável por aplicar alguns tratamentos no processamento
+    > Verificar se o produto solicitado existe em estoque
+    > Verifica se a quantidae em estoque é suficiente 
+    > Verificar se a quantidade está sendo passada como 0
+    > Só adiciona o pedido realizado a lista pedidos_realizado se a quantidade for igual ou abaixo do que tem disponível em estoque
+    
+
+    Args:
+        stock (dict): Dicionário contendo o estoque fictício da loja online
+        product (str): Descrição do produto
+        amount (int): Quantidade de produto em estoque
+        client (str): Nome do cliente
+        address (str): Nome do endereço
+        date_order (str): Data do pedido
+        payment (str): Método de pagamento
+        completed_orders (list): Lista que será inserida, após o pedido ser finalizado
+    """
     
     # Verificar se o produto solicitado existe em estoque
     
