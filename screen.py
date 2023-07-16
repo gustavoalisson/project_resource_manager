@@ -51,7 +51,7 @@ def apply_mask_zip(zip_var: str) -> str:
 
     return zip_formatted
 
-def get_address(zip_code_entry: str, label_address: str, logger) -> None:
+def get_address(zip_code_entry: str, label_address: str, uf_var: str, logger) -> None:
     """
     Função responsável por pegar o endereço e realizar uma requisição no VIA CEP.
 
@@ -68,6 +68,8 @@ def get_address(zip_code_entry: str, label_address: str, logger) -> None:
         data = response.json()
         if "erro" not in data:
             label_address.set(data["logradouro"])
+            uf_var.set(data["uf"])
+            
         logger.info('CEP válido')
     else:
         logger.warning('CEP inválido! ')
@@ -171,13 +173,14 @@ def declare_variables() -> str:
 
     client_var = customtkinter.StringVar()
     address_var = customtkinter.StringVar()
+    uf_var = customtkinter.StringVar()
     date_order = customtkinter.StringVar()
     product_var = customtkinter.StringVar()
     quantity_var = customtkinter.StringVar()
     payment_method_var = customtkinter.StringVar()
     zip_var = customtkinter.StringVar() 
     
-    return client_var, address_var, date_order, product_var, quantity_var, payment_method_var, zip_var
+    return client_var, address_var, uf_var, date_order, product_var, quantity_var, payment_method_var, zip_var
 
 
 def btn_confirm_process(window: customtkinter.CTk, product_var: str, quantity_var: int, client_var: str, address_var: str, date_order: str, payment_method_var: str, logger) -> customtkinter.CTkButton:
@@ -221,7 +224,7 @@ def generate_screen(logger) -> None:
     
     generate_table_products(window)
     
-    client_var, address_var, date_order, product_var, quantity_var, payment_method_var, zip_var = declare_variables()
+    client_var, address_var, uf_var, date_order, product_var, quantity_var, payment_method_var, zip_var = declare_variables()
     
     
     label_client = customtkinter.CTkLabel(window, text="Cliente:")
@@ -229,10 +232,13 @@ def generate_screen(logger) -> None:
      
     label_zip = customtkinter.CTkLabel(window, text="CEP: ") #novo
     entry_zip  = customtkinter.CTkEntry(window, textvariable=zip_var)
-    btn_search = customtkinter.CTkButton(window, text='Buscar', command=lambda: get_address(zip_var, address_var, logger))
+    btn_search = customtkinter.CTkButton(window, text='Buscar', command=lambda: get_address(zip_var, address_var, uf_var, logger))
         
     label_address = customtkinter.CTkLabel(window, text="Logradouro")
     entry_address = customtkinter.CTkEntry(window, textvariable=address_var, width=300, height=25)
+    
+    label_uf = customtkinter.CTkLabel(window, text="UF")
+    entry_uf = customtkinter.CTkEntry(window, textvariable=uf_var, width=300, height=25)
     
     label_date_order = customtkinter.CTkLabel(window, text="Data do Pedido:")
     entry_date = customtkinter.CTkEntry(window, textvariable=date_order, width=300, height=25)
@@ -264,6 +270,9 @@ def generate_screen(logger) -> None:
     
     label_address.pack()
     entry_address.pack()
+    
+    label_uf.pack()
+    entry_uf.pack()
 
     label_date_order.pack()
     entry_date.pack()
