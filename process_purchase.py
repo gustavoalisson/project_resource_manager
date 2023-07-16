@@ -1,3 +1,20 @@
+def check_product_existence(stock: dict, product: str, logger) -> bool:
+    
+     # Verificar se o produto solicitado existe em estoque 
+    if product not in stock['Produto']:
+        logger.warning(f"O produto >> {product} << não existe em nosso estoque.")
+        return False
+    return True
+
+def check_sufficient_quantity(stock: dict, product: str, amount: int, logger) -> bool:
+    
+    # Verifica se a quantidade em estoque é suficiente
+    index = stock['Produto'].index(product)
+    if amount > stock['Quantidade'][index]:
+        logger.warning(f"A quantidade solicitada do produto {product} excede a disponibilidade atual. Em estoque: {stock['Quantidade'][index]}")
+        return False
+    return True
+
 def treat_client_request(stock: dict, product: str, amount: int, client: str, address: str, date_order: str, payment: str, completed_orders: list, logger) -> None:
     """
     Função responsável por aplicar alguns tratamentos no processamento
@@ -18,18 +35,14 @@ def treat_client_request(stock: dict, product: str, amount: int, client: str, ad
         completed_orders (list): Lista que será inserida, após o pedido ser finalizado
     """
     
-    # Verificar se o produto solicitado existe em estoque
-    
-    if product not in stock['Produto']:
-        logger.warning(f"O produto >> {product} << não existe em nosso estoque.")
+   
+    if not check_product_existence(stock, product, logger):
         return
     
-    # Verifica se a quantidade em estoque é suficiente
-    
-    index = stock['Produto'].index(product)
-    if amount > stock['Quantidade'][index]:
-        logger.warning(f"A quantidade solicitada do produto {product} excede a disponibilidade atual. Em estoque: {stock['Quantidade'][index]}")
+    if not check_sufficient_quantity(stock, product, amount, logger):
         return
+    
+
     
     # Verificar se a quantidade está sendo passada como 0
     if amount == 0:
@@ -49,7 +62,7 @@ def treat_client_request(stock: dict, product: str, amount: int, client: str, ad
         }
 
     # Só adiciona o pedido realizado a lista pedidos_realizado se a quantidade for igual ou abaixo do que tem disponível em estoque
-    
+    index = stock['Produto'].index(product)
     if amount <= stock['Quantidade'][index]:
         completed_orders.append(pedido)     
         # Atualize o estoque
