@@ -1,1 +1,1 @@
-# project_resource_manager
+# Projeto: Gerenciador de Recursos :gear::department_store:
