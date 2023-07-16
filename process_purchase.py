@@ -44,7 +44,7 @@ def treat_client_request(stock: dict, product: str, amount: int, client: str, ad
     'Produto': product,
     'Quantidade': amount,
     'Endereço': address,
-    'Data do Pedido': date_order,
+    'Data_do_Pedido': date_order,
     'Tipo_Pagamento': payment
         }
 
