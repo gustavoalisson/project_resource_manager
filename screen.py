@@ -74,10 +74,12 @@ def finalize_order():
     print('Pedido finalizado com sucesso! ')
     
     # Gerando relatório em csv com os dados dos pedidos dos Clientes
-    df_pedidos = pd.DataFrame(completed_orders)
-    df_pedidos.to_csv(os.getenv('PATH_REPORT'))
+    df_orders = pd.DataFrame(completed_orders)
+    if not df_orders.empty:
+        
+        df_orders.to_csv(os.getenv('PATH_REPORT'))
     
-    return df_pedidos
+    return df_orders
 
 def configure_windows_screen_tkinter():
     customtkinter.set_appearance_mode("System")
