@@ -101,10 +101,13 @@ def product_most_popular_by_customer():
     
     conn.close()
 
-    
-# insert_all_orders_columns() 
-# insert_most_purchased_product()
-# product_most_popular_by_customer()
+
+def insert_relevant_information_into_database():
+
+    insert_all_orders_columns() 
+    insert_most_purchased_product()
+    product_most_popular_by_customer()
+
 
 
 
