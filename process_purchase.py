@@ -53,10 +53,7 @@ def treat_client_request(stock: dict, product: str, amount: int, client: str, ad
     if not check_zero_quantity(amount, logger):
         return
     
-    if amount == 0:
-        logger.warning('Não é possível passar o valor 0 para Realizar um pedido. ')
-        return
-    
+ 
     logger.info(f"Pedido recebido: {product}, Quantidade: {amount}, Cliente: {client}")
     
     
