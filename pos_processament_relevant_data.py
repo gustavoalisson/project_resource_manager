@@ -8,15 +8,25 @@ load_dotenv()
 
 
 def connection_database():
-    conn = sqlite3.connect(os.getenv('NAME_DB'))
-    
-    return conn
+    try:        
+        conn = sqlite3.connect(os.getenv('NAME_DB'))
+        print('Conexão bem-sucedida!')
+        return conn
+    except Exception as e:
+        print(f'Erro ao conectar com o banco de dados {e}')
+        raise
     
 def read_csv_orders():
     
-    df = pd.read_csv(os.getenv('PATH_REPORT'))
-    
-    return df
+    try:
+        df = pd.read_csv(os.getenv('PATH_REPORT'))
+        return df
+    except FileNotFoundError:
+        print('Arquivo CSV não foi encontrado')
+        raise
+    except pd.errors.EmptyDataError:
+        print('O arquivo está vazio')
+        raise
 
 def filter_all_columns(df):
     df_filtered = df[['Cliente', 'Produto', 'Quantidade', 'Endereço', 'Data_do_Pedido', 'Tipo_Pagamento']]
@@ -44,6 +54,8 @@ def insert_all_orders_columns():
 
     df_filtered.to_sql('pedidos', conn, if_exists='append', index=False)
     
+    print('Dados inserido com sucesso!')
+    
     conn.close()
 
 def filter_column_quantity_and_product(df):
@@ -70,6 +82,8 @@ def insert_most_purchased_product():
                         )''')
 
     product_most_bought.to_sql('produto_mais_comprado', conn, if_exists='replace', index=False)
+    
+    print('Dados de produto mais comprado inserido com sucesso!')
 
     conn.close()    
   
@@ -98,6 +112,8 @@ def product_most_popular_by_customer():
                         )''')
 
     popular_products_by_customer.to_sql('produtos_populares_por_cliente', conn, if_exists='replace', index=False)
+    
+    print('Dados de produto mais popular por cliente, inserido com sucesso! ')
     
     conn.close()
 
