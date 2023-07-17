@@ -106,7 +106,7 @@ def execute_process(product_var: str, quantity_var: str, client_var: str, addres
     else:
         logger.warning('Dados incompletos. Preencha todos os campos.')
 
-def finalize_order(logger) -> pd.DataFrame:
+def finalize_order(logger, window) -> pd.DataFrame:
     """
     Função responsável por finalizar o pedido e gerar um relatório em CSV com os dados do pedido
 
@@ -123,7 +123,8 @@ def finalize_order(logger) -> pd.DataFrame:
         logger.info('Pedido finalizado com sucesso! ')
         
     
-    
+    window.destroy()
+        
     return df_orders
 
 def configure_windows_screen_tkinter() -> customtkinter.CTk:
@@ -211,7 +212,7 @@ def btn_finalize_process(window: customtkinter.CTk, logger) -> customtkinter.CTk
         customtkinter.CTkButton: Retornar o botão para finalizar
     """
     button_finalize = customtkinter.CTkButton(window, text="Finalizar Pedido",
-                                          command=lambda: finalize_order(logger), fg_color="red")
+                                          command=lambda: finalize_order(logger, window), fg_color="red")
         
     return button_finalize
     
