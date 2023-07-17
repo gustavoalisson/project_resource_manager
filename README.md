@@ -16,6 +16,7 @@ Para executar o projeto localmente em sua máquina é necessário seguir os segu
 * Criar uma virtualenv dentro do projeto
 * Instalar as dependências necessárias que estão todas contidas em um arquivo (requirements.txt)
 * Verificar se o arquivo .env está configurado (Informações de como configurar no tópico de CONFIGURAÇÃO)
+* Caso deseje apenas executar o pós processamemnto, é possível inserindo o arquivo .CSV de exemplo que está na pasta report_csv_sample no raiz do projeto ou em path desejado. E também comentar na main, a primeira parte do projeto que é a execução do projeto. 
 
 Após as etapas acima serem concluídas, para rodar o projeto é muito simples, basta chamar um python main.py
 
