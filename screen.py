@@ -74,7 +74,7 @@ def get_address(zip_code_entry: str, label_address: str, uf_var: str, logger) ->
     else:
         logger.warning('CEP inválido! ')
     
-def execute_request(product_var: str, quantity_var: str, client_var: str, address_var: str, date_order: str, payment_method_var: str, logger) -> None:
+def execute_process(product_var: str, quantity_var: str, client_var: str, address_var: str, date_order: str, payment_method_var: str, logger) -> None:
     """_summary_
 
     Args:
@@ -114,13 +114,15 @@ def finalize_order(logger) -> pd.DataFrame:
         pd.Dataframe: Retorna um dataframe contendo os pedidos / caso não haja pedidos, retorna um df vazio
     """
       
-    logger.info('Pedido finalizado com sucesso! ')
     
     # Gerando relatório em csv com os dados dos pedidos dos Clientes
     df_orders = pd.DataFrame(completed_orders)
     if not df_orders.empty:
         
         df_orders.to_csv(os.getenv('PATH_REPORT'))
+        logger.info('Pedido finalizado com sucesso! ')
+        
+    
     
     return df_orders
 
@@ -193,7 +195,7 @@ def btn_confirm_process(window: customtkinter.CTk, product_var: str, quantity_va
     """
     
     button_process = customtkinter.CTkButton(window, text="Registrar Pedido",
-                                        command=lambda: execute_request(product_var, quantity_var, client_var, address_var, date_order, payment_method_var, logger))
+                                        command=lambda: execute_process(product_var, quantity_var, client_var, address_var, date_order, payment_method_var, logger))
     
     return button_process
 
@@ -210,7 +212,7 @@ def btn_finalize_process(window: customtkinter.CTk, logger) -> customtkinter.CTk
     """
     button_finalize = customtkinter.CTkButton(window, text="Finalizar Pedido",
                                           command=lambda: finalize_order(logger), fg_color="red")
-    
+        
     return button_finalize
     
 
