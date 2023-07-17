@@ -40,4 +40,4 @@ logger = get_logger()
 
 if __name__ == '__main__':
     generate_screen(logger)
-    insert_relevant_information_into_database()
+    insert_relevant_information_into_database(logger)
