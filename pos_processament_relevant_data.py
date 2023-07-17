@@ -124,7 +124,18 @@ def orders_by_month(df, conn, logger):
     orders_per_month.to_sql('pedidos_por_mes', conn, if_exists='replace', index=False)
     
     logger.info('Dados de pedidos por mês inserido com sucesso!')
-        
+ 
+# Identifica métodos de pagamento mais populares    
+def orders_by_payment_type(df, conn, logger):
+    df = read_csv_orders()
+    
+    payment_type = df.groupby('Tipo_Pagamento').size().reset_index(name='Total_Pedidos')
+    payment_type = payment_type.sort_values('Total_Pedidos', ascending=False)
+    
+    payment_type.to_sql('pedidos_por_tipo_pagamento', conn, if_exists='replace', index=False)
+    
+    logger.info('Dados de pedidos por tipo de pagamento insrido com sucesso!!')
+ 
 
 def insert_relevant_information_into_database(logger):
      
@@ -140,8 +151,8 @@ def insert_relevant_information_into_database(logger):
         product_most_popular_by_customer(df, conn, logger)
         orders_by_day_of_week(df, conn, logger)
         orders_by_month(df, conn, logger)
+        orders_by_payment_type(df, conn, logger)
         
         conn.close()
     
-
 
