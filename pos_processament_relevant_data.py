@@ -22,11 +22,8 @@ def read_csv_orders():
         df = pd.read_csv(os.getenv('PATH_REPORT'))
         return df
     except FileNotFoundError:
-        print('Arquivo CSV não foi encontrado')
-        raise
-    except pd.errors.EmptyDataError:
-        print('O arquivo está vazio')
-        raise
+        return None
+
 
 def filter_all_columns(df):
     df_filtered = df[['Cliente', 'Produto', 'Quantidade', 'Endereço', 'Data_do_Pedido', 'Tipo_Pagamento']]
@@ -34,13 +31,10 @@ def filter_all_columns(df):
     return df_filtered
 
 # Insere todas as colunas gerada no arquivo CSV no database
-def insert_all_orders_columns():
-    df = read_csv_orders()
+def insert_all_orders_columns(df, conn):
     
     df_filtered = filter_all_columns(df)
     
-    conn = connection_database()
-
     cursor = conn.cursor()
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS pedidos (
@@ -54,9 +48,8 @@ def insert_all_orders_columns():
 
     df_filtered.to_sql('pedidos', conn, if_exists='append', index=False)
     
-    print('Dados inserido com sucesso!')
+    print('Dados do relatório inserido na base de dados com sucesso!!!')
     
-    conn.close()
 
 def filter_column_quantity_and_product(df):
     df_filtered = df[['Produto', 'Quantidade']]
@@ -64,12 +57,9 @@ def filter_column_quantity_and_product(df):
     return df_filtered
 
 # Insere em uma tabela específica o produto mais comprado
-def insert_most_purchased_product():
-    df = read_csv_orders()
+def insert_most_purchased_product(df, conn):
     df_filtered = filter_column_quantity_and_product(df)
     
-    conn = connection_database()
-
     cursor = conn.cursor()
     
     df_products = df_filtered.groupby('Produto')['Quantidade'].sum().reset_index()
@@ -85,7 +75,6 @@ def insert_most_purchased_product():
     
     print('Dados de produto mais comprado inserido com sucesso!')
 
-    conn.close()    
   
 def filter_column_client_and_product(df):
     df_filtered = df[['Cliente', 'Produto']]
@@ -93,12 +82,9 @@ def filter_column_client_and_product(df):
     return df_filtered
     
 # Insere em uma tabela específica um produto mais popular para cada cliente
-def product_most_popular_by_customer():
-    df = read_csv_orders()
+def product_most_popular_by_customer(df, conn):
     df_filtered = filter_column_client_and_product(df)
     
-    conn = connection_database()
-
     cursor = conn.cursor()
     
     count_products_per_customer = df_filtered.groupby(['Cliente', 'Produto']).size().reset_index(name='Contagem')
@@ -115,14 +101,23 @@ def product_most_popular_by_customer():
     
     print('Dados de produto mais popular por cliente, inserido com sucesso! ')
     
-    conn.close()
 
 
 def insert_relevant_information_into_database():
-
-    insert_all_orders_columns() 
-    insert_most_purchased_product()
-    product_most_popular_by_customer()
+     
+    df = read_csv_orders()
+    
+    if df is None:
+        print('Arquivo CSV não foi encontrado. Não é possível inserir os dados relevantes ao banco de dados.')
+    else:
+        conn = connection_database()
+        
+        insert_all_orders_columns(df, conn) 
+        insert_most_purchased_product(df, conn)
+        product_most_popular_by_customer(df, conn)
+        
+        conn.close()
+    
 
 
 
