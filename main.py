@@ -1,6 +1,6 @@
 import logging
 
-
+from pos_processament_relevant_data import insert_relevant_information_into_database
 from screen import generate_screen 
 from datetime import datetime
 from pathlib import Path
@@ -40,3 +40,4 @@ logger = get_logger()
 
 if __name__ == '__main__':
     generate_screen(logger)
+    insert_relevant_information_into_database()
